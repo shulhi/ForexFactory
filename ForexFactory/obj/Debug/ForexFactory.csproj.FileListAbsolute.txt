@@ -1,0 +1,13 @@
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\ForexFactory.exe.config
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\ForexFactory.exe
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\ForexFactory.pdb
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\HtmlAgilityPack.dll
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\System.Net.Http.Extensions.dll
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\System.Net.Http.Primitives.dll
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\HtmlAgilityPack.pdb
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\HtmlAgilityPack.xml
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\System.Net.Http.Extensions.xml
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Debug\System.Net.Http.Primitives.xml
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\obj\Debug\ForexFactory.exe
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\obj\Debug\ForexFactory.pdb
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\obj\Debug\ForexFactory.csprojResolveAssemblyReference.cache

@@ -1,0 +1,13 @@
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\ForexFactory.exe.config
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\ForexFactory.exe
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\ForexFactory.pdb
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\HtmlAgilityPack.dll
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\System.Net.Http.Extensions.dll
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\System.Net.Http.Primitives.dll
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\HtmlAgilityPack.pdb
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\HtmlAgilityPack.xml
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\System.Net.Http.Extensions.xml
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\bin\Release\System.Net.Http.Primitives.xml
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\obj\Release\ForexFactory.csprojResolveAssemblyReference.cache
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\obj\Release\ForexFactory.exe
+F:\SkyDrive\Projects\Console\ForexFactory\ForexFactory\obj\Release\ForexFactory.pdb
