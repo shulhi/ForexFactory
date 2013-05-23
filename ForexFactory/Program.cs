@@ -16,57 +16,56 @@ namespace ForexFactory
     {
         private static readonly Random Random = new Random();
         private const string Path = @"F:\ff.csv";
-        private const int StartEventId = 40111;
-        private const int EndEventId = 40115;
 
         private static void Main(string[] args)
         {
+            //var ids = new[]
+            //    {
+            //        45895, 48235, 48263, 48249, 48148, 49187, 44711, 48308, 44247, 44731, 44594, 45194, 47374, 46053,
+            //        46089, 46077, 46065, 45935, 46101, 49188, 49189, 49190, 49191, 45278, 44316, 44959, 44960, 46961,
+            //        45971, 46186, 46222, 49186, 47581, 49196, 45842, 49202, 47782, 47784, 46614, 49192, 49193, 45604,
+            //        44190, 44315, 44788, 44920, 47155, 47160, 47164, 47167, 47171, 47175, 47091, 46243, 46248, 46149,
+            //        49194, 45500, 46774, 46602, 47735, 46282, 45552, 49199, 44712, 49195, 47747, 47060, 47303, 45959,
+            //        49200, 46336, 46348, 47292
+            //    };            
+            
             var ids = new[]
                 {
-                    45895, 48235, 48263, 48249, 48148, 49187, 44711, 48308, 44247, 44731, 44594, 45194, 47374, 46053,
-                    46089, 46077, 46065, 45935, 46101, 49188, 49189, 49190, 49191, 45278, 44316, 44959, 44960, 46961,
-                    45971, 46186, 46222, 49186, 47581, 49196, 45842, 49202, 47782, 47784, 46614, 49192, 49193, 45604,
-                    44190, 44315, 44788, 44920, 47155, 47160, 47164, 47167, 47171, 47175, 47091, 46243, 46248, 46149,
-                    49194, 45500, 46774, 46602, 47735, 46282, 45552, 49199, 44712, 49195, 47747, 47060, 47303, 45959,
-                    49200, 46336, 46348, 47292
+                    45895
                 };
 
             var parser = new HtmlDocument();
-            var list = new List<Dictionary<string, string>>();
 
-            foreach (var id in ids)
+            for (var i = 0; i < ids.Length; i++ )
             {
-                parser.LoadHtml(LoadHtmlFromFf(id));
+                Console.WriteLine("Item {0} out of {1}", i + 1, ids.Length + 1);
+                parser.LoadHtml(LoadHtmlFromFf(ids[i]));
                 var html = parser.DocumentNode.InnerText;
                 var metadata = ConvertMetadata(html);
-                list.Add(metadata);
+                SaveToCsv(metadata);
 
                 var random = Random.Next(10, 40);
                 Console.WriteLine("Delaying for {0} seconds from {1}", random, DateTime.Now);
                 Thread.Sleep(new TimeSpan(0, 0, 0, random));
             }
 
-            MakeItCsv(list);
-
             Console.ReadLine();
         }
 
-        private static void MakeItCsv(IEnumerable<Dictionary<string, string>> lists)
+        private static void SaveToCsv(Dictionary<string, string> lists)
         {
             Console.WriteLine("Saving to csv...");
             // create header for first time
             if (!File.Exists(Path))
             {
                 File.WriteAllText(Path, "sep=;\n");
-                File.AppendAllText(Path, String.Join(";", lists.First().Keys));
+                File.AppendAllText(Path, String.Join(";", lists.Keys));
             }
 
-            foreach (var list in lists)
-            {
-                string csv = String.Join(";", list.Values);
-                File.AppendAllText(Path, "\n");
-                File.AppendAllText(Path, csv);
-            }
+            string csv = String.Join(";", lists.Values);
+            File.AppendAllText(Path, "\n");
+            File.AppendAllText(Path, csv);
+
             Console.WriteLine("Done saving.");
         }
 
@@ -79,11 +78,11 @@ namespace ForexFactory
                 {
                     "Source",
                     "Measures",
-                    "Usual Effect",
+                    "Usual Effect", //Usual effect
                     "Frequency",
                     "Next Release",
                     "FF Notes",
-                    "Why Traders Care",
+                    "Why TradersCare", //Why Traders Care
                     "Derived Via",
                     "Acro Expand",
                     "Also Called"
@@ -94,7 +93,7 @@ namespace ForexFactory
                 if (items.Contains(search))
                 {
                     var index = items.FindIndex(s => s == search);
-                    metadata.Add(search, items[index + 1].TrimEnd(';'));
+                    metadata.Add(search, items[index + 1].Trim().TrimEnd(';'));
                 }
                 else
                 {
