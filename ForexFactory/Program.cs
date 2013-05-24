@@ -17,36 +17,29 @@ namespace ForexFactory
         private static readonly Random Random = new Random();
         private const string Path = @"F:\ff.csv";
 
+        public Dictionary<string, string> Metadata { get; set; }
+
         private static void Main(string[] args)
         {
-            //var ids = new[]
-            //    {
-            //        45895, 48235, 48263, 48249, 48148, 49187, 44711, 48308, 44247, 44731, 44594, 45194, 47374, 46053,
-            //        46089, 46077, 46065, 45935, 46101, 49188, 49189, 49190, 49191, 45278, 44316, 44959, 44960, 46961,
-            //        45971, 46186, 46222, 49186, 47581, 49196, 45842, 49202, 47782, 47784, 46614, 49192, 49193, 45604,
-            //        44190, 44315, 44788, 44920, 47155, 47160, 47164, 47167, 47171, 47175, 47091, 46243, 46248, 46149,
-            //        49194, 45500, 46774, 46602, 47735, 46282, 45552, 49199, 44712, 49195, 47747, 47060, 47303, 45959,
-            //        49200, 46336, 46348, 47292
-            //    };            
-           
-            //var parser = new HtmlDocument();
+            var ids = ScrapeIds(LoadHtmlFromFile(@"F:\FF.htm")).ToArray();
+            var events = ScrapeEvents(LoadHtmlFromFile(@"F:\FF.htm")).ToArray();
 
-            //for (var i = 0; i < ids.Length; i++ )
-            //{
-            //    Console.WriteLine("Item {0} out of {1}", i + 1, ids.Length + 1);
-            //    parser.LoadHtml(LoadHtmlFromFf(ids[i]));
-            //    var html = parser.DocumentNode.InnerText;
-            //    var metadata = ConvertMetadata(html);
-            //    SaveToCsv(metadata);
+            var parser = new HtmlDocument();
 
-            //    var random = Random.Next(10, 40);
-            //    Console.WriteLine("Delaying for {0} seconds from {1}", random, DateTime.Now);
-            //    Thread.Sleep(new TimeSpan(0, 0, 0, random));
-            //}
+            for (var i = 0; i < 2; i++)
+            {
+                Console.WriteLine("Item {0} out of {1}", i + 1, ids.Length + 1);
+                parser.LoadHtml(LoadHtmlFromFf(ids[i]));
+                var html = parser.DocumentNode.InnerText;
+                var metadata = ScrapeMetadata(html);
+                metadata.Add("EventId", ids[i]);
+                metadata.Add("Event", events[i]);
+                SaveToCsv(metadata);
 
-            GetAvailableIds();
-            GetEvents();
-
+                var random = Random.Next(10, 40);
+                Console.WriteLine("Delaying for {0} seconds from {1}", random, DateTime.Now);
+                Thread.Sleep(new TimeSpan(0, 0, 0, random));
+            }
 
             Console.ReadLine();
         }
@@ -68,7 +61,7 @@ namespace ForexFactory
             Console.WriteLine("Done saving.");
         }
 
-        private static Dictionary<string, string> ConvertMetadata(string content)
+        private static Dictionary<string, string> ScrapeMetadata(string content)
         {
             var source = ReadAllLines(content);
             var items = source.Where(s => !String.IsNullOrWhiteSpace(s)).Select(s => s.Replace("\t", "")).ToList();
@@ -103,21 +96,9 @@ namespace ForexFactory
             return metadata;
         }
 
-        private static IEnumerable<string> ReadAllLines(string content)
+        private static string LoadHtmlFromFf(string eventId)
         {
-            using (var reader = new StringReader(content))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    yield return line;
-                }
-            }
-        }
-
-        private static string LoadHtmlFromFf(int eventId)
-        {
-            var httpClient = new HttpClient {BaseAddress = new Uri("http://www.forexfactory.com/")};
+            var httpClient = new HttpClient { BaseAddress = new Uri("http://www.forexfactory.com/") };
 
             httpClient.DefaultRequestHeaders.Add("User-Agent",
                                                  "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
@@ -128,7 +109,7 @@ namespace ForexFactory
                     new KeyValuePair<string, string>("do", "ajax"),
                     new KeyValuePair<string, string>("contentType", "Content"),
                     new KeyValuePair<string, string>("flex", "calendar_main"),
-                    new KeyValuePair<string, string>("details", eventId.ToString())
+                    new KeyValuePair<string, string>("details", eventId)
                 });
 
             Console.WriteLine("Requesting  {0}", eventId);
@@ -142,26 +123,38 @@ namespace ForexFactory
             return response.Content.ReadAsStringAsync().Result;
         }
 
-        private static void GetAvailableIds()
+        private static IEnumerable<string> ReadAllLines(string content)
         {
-            var parser = new HtmlDocument();
-            parser.LoadHtml(LoadHtmlFromFile(@"F:\FF.htm"));
-
-            var datas = parser.DocumentNode.SelectNodes("//tr[@data-eventid]");
-            var ids = datas.Select(data => data.GetAttributeValue("data-eventid", null).Trim()).ToList();
-
-            Console.WriteLine(ids.Count);
+            using (var reader = new StringReader(content))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    yield return line;
+                }
+            }
         }
 
-        private static void GetEvents()
+        private static IEnumerable<string> ScrapeIds(string html)
         {
             var parser = new HtmlDocument();
-            parser.LoadHtml(LoadHtmlFromFile(@"F:\FF.htm"));
+            parser.LoadHtml(html);
+
+            var datas = parser.DocumentNode.SelectNodes("//tr[@data-eventid]");
+            var ids = datas.Select(data => data.GetAttributeValue("data-eventid", null).Trim());
+
+            return ids;
+        }
+
+        private static IEnumerable<string> ScrapeEvents(string html)
+        {
+            var parser = new HtmlDocument();
+            parser.LoadHtml(html);
 
             var datas = parser.DocumentNode.SelectNodes("//td[@class='event']");
-            var events = datas.Select(data => data.InnerText.Trim()).ToList();
+            var events = datas.Select(data => data.InnerText.Trim());
 
-            Console.WriteLine(events.Count);
+            return events;
         }
 
         private static string LoadHtmlFromFile(string path)
@@ -169,21 +162,6 @@ namespace ForexFactory
             return System.IO.File.ReadAllText(path);
         }
 
-        //private static void ToCsv()
-        //{
-        //    var start = DateTime.Now;
-        //    var lines = System.IO.File.ReadAllText(@"F:\FF.txt");
-        //    lines = lines.Replace("\t", "");
-        //    var sep = Regex.Replace(lines, @"[\r\n?|\n]{2,}", "\n");
-        //    var sep2 = sep.Split('\n');
-        //    var end = DateTime.Now;
-        //    Console.WriteLine("{0}ms", (end - start).TotalMilliseconds);
-
-        //    start = DateTime.Now;
-        //    var source = System.IO.File.ReadAllLines(@"F:\FF.txt").ToList();
-        //    var newlist = source.Where(s => !String.IsNullOrWhiteSpace(s)).Select(s => s.Replace("\t", "")).ToList();
-        //    end = DateTime.Now;
-        //    Console.WriteLine("{0}ms", (end - start).TotalMilliseconds);
-        //}
+        
     }
 }
