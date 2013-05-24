@@ -28,26 +28,25 @@ namespace ForexFactory
             //        49194, 45500, 46774, 46602, 47735, 46282, 45552, 49199, 44712, 49195, 47747, 47060, 47303, 45959,
             //        49200, 46336, 46348, 47292
             //    };            
-            
-            var ids = new[]
-                {
-                    45895
-                };
+           
+            //var parser = new HtmlDocument();
 
-            var parser = new HtmlDocument();
+            //for (var i = 0; i < ids.Length; i++ )
+            //{
+            //    Console.WriteLine("Item {0} out of {1}", i + 1, ids.Length + 1);
+            //    parser.LoadHtml(LoadHtmlFromFf(ids[i]));
+            //    var html = parser.DocumentNode.InnerText;
+            //    var metadata = ConvertMetadata(html);
+            //    SaveToCsv(metadata);
 
-            for (var i = 0; i < ids.Length; i++ )
-            {
-                Console.WriteLine("Item {0} out of {1}", i + 1, ids.Length + 1);
-                parser.LoadHtml(LoadHtmlFromFf(ids[i]));
-                var html = parser.DocumentNode.InnerText;
-                var metadata = ConvertMetadata(html);
-                SaveToCsv(metadata);
+            //    var random = Random.Next(10, 40);
+            //    Console.WriteLine("Delaying for {0} seconds from {1}", random, DateTime.Now);
+            //    Thread.Sleep(new TimeSpan(0, 0, 0, random));
+            //}
 
-                var random = Random.Next(10, 40);
-                Console.WriteLine("Delaying for {0} seconds from {1}", random, DateTime.Now);
-                Thread.Sleep(new TimeSpan(0, 0, 0, random));
-            }
+            GetAvailableIds();
+            GetEvents();
+
 
             Console.ReadLine();
         }
@@ -143,9 +142,31 @@ namespace ForexFactory
             return response.Content.ReadAsStringAsync().Result;
         }
 
-        private static string LoadHtmlFromFile()
+        private static void GetAvailableIds()
         {
-            return System.IO.File.ReadAllText(@"F:\FF.txt");
+            var parser = new HtmlDocument();
+            parser.LoadHtml(LoadHtmlFromFile(@"F:\FF.htm"));
+
+            var datas = parser.DocumentNode.SelectNodes("//tr[@data-eventid]");
+            var ids = datas.Select(data => data.GetAttributeValue("data-eventid", null).Trim()).ToList();
+
+            Console.WriteLine(ids.Count);
+        }
+
+        private static void GetEvents()
+        {
+            var parser = new HtmlDocument();
+            parser.LoadHtml(LoadHtmlFromFile(@"F:\FF.htm"));
+
+            var datas = parser.DocumentNode.SelectNodes("//td[@class='event']");
+            var events = datas.Select(data => data.InnerText.Trim()).ToList();
+
+            Console.WriteLine(events.Count);
+        }
+
+        private static string LoadHtmlFromFile(string path)
+        {
+            return System.IO.File.ReadAllText(path);
         }
 
         //private static void ToCsv()
